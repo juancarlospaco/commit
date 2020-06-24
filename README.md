@@ -1,2 +1,0 @@
-# commit
-Git Commit assistant

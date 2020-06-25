@@ -1,5 +1,5 @@
 import os, osproc, rdstdin, strutils, random, times
-
+randomize()
 const
   fakeCommitMessages = [
     "'Update documentation'", "'Fix a Typo'", "'Update README.md'", "'Optimization, minor'", "'Typo, minor'", "'Minor'", "'Fix README'",
@@ -23,15 +23,14 @@ template commit1by1() =
     mesgs = create(string, sizeOf string)
   mesgs[] = readLineFromStdin("Git Commit Message?: ").strip
   for file in readLineFromStdin("Files to Commit? (Whitespace separated): ").strip.splitWhitespace:
-    echo execCmdEx("git commit --message='" & mesgs[] & "' --date='" & $(now() - minutes(i[])) & "' " & file.quoteShell).output
+    echo execCmdEx("git commit --message='" & mesgs[] & "' --date='" & $(now() - minutes(i[] + rand(0..9))) & "' " & file.quoteShell).output
     inc i[]
   dealloc(i)
   dealloc(mesgs)
 
 template commitFake() =
-  once: randomize()
   for i in 0..readLineFromStdin("How many Fake Git Commits? (Integer): ").parseInt.Positive:
-    echo execCmdEx("git commit --allow-empty --date='" & $(now() - minutes(i)) & "' --message=" & fakeCommitMessages.sample).output
+    echo execCmdEx("git commit --allow-empty --date='" & $(now() - minutes(i + rand(0..9))) & "' --message=" & fakeCommitMessages.sample).output
 
 template commitUndo() =
   if execCmdEx("git reset --hard HEAD~" & $readLineFromStdin("How many commits backwards to revert? (Integer): ").parseInt.Positive).exitCode == 0:
